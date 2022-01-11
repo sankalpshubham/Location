@@ -10,8 +10,10 @@ import UIKit
 import MessageUI
 import CoreLocation
 import UserNotifications
+import Foundation
+import Alamofire
 
-class ViewController: UIViewController, CLLocationManagerDelegate, UNUserNotificationCenterDelegate, MFMessageComposeViewControllerDelegate {
+class ViewController: UIViewController, CLLocationManagerDelegate, UNUserNotificationCenterDelegate {
     
     
     //Constant for LocationManager
@@ -44,13 +46,13 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UNUserNotific
         view.endEditing(true)
     }
     
-    @IBAction func homeButton(_ sender: UIButton) {
+    @IBAction func homeButton(_ sender: UIButton) {                                     // this just ends the app when clicked on Home
         exit(0)
     }
     
     // monitor the location
     @IBAction func startMonitoringLocation(_ sender: UIButton) {
-        geoFencRegion = CLCircularRegion(center: coordinates2D, radius: 100, identifier: destinationNameBar.text!)
+        geoFencRegion = CLCircularRegion(center: coordinates2D, radius: 50, identifier: destinationNameBar.text!)
         locationManager.startMonitoring(for: geoFencRegion)
     }
     
@@ -58,7 +60,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UNUserNotific
     func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
         print("Entered: \(region.identifier)")
         postLocalNotifications(eventTitle: "Entered: \(region.identifier)")
-        sendText(message: "Your user arrived at the destination")
+        sendMessage(message: "Your user arrived at the destination")
         locationManager.stopMonitoring(for: geoFencRegion)
     }
     
@@ -93,26 +95,21 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UNUserNotific
         }
     }
     
-    
-    // set up message to send to the user guardian --------------
-    func sendText(message: String) {
-        if(MFMessageComposeViewController.canSendText()) {
-            let controller = MFMessageComposeViewController()
-            controller.messageComposeDelegate = self
-            controller.recipients = [self.phoneNumber]
-            controller.body = message
-            self.present(controller, animated: true, completion: nil)
+    func sendMessage(message: String) {
+        if let accountSID = ProcessInfo.processInfo.environment["TWILIO_ACCOUNT_SID"], let authToken = ProcessInfo.processInfo.environment["TWILIO_AUTH_TOKEN"] {
+            
+            let url = "https://api.twilio.com/2010-04-01/Accounts/ACe9af4c70887a4bd6d54354099409fda6/Messages"
+            let parameters = ["From": "+14159037449", "To": phoneNumber, "Body": message]      //from: Twilio phone no.
+            
+            AF.request(url, method: .post, parameters: parameters)
+                .authenticate(username: accountSID, password: authToken)
+                .responseJSON { response in
+                    debugPrint(response)
+                }
+            print("Worked!")
         } else {
-            print("Unable to send message")
+            print("Did not work!")
         }
-    }
-    
-    func messageComposeViewController(_ controller: MFMessageComposeViewController, didFinishWith result: MessageComposeResult) {
-        self.dismiss(animated: true, completion: nil)
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {             // message notification
-        self.navigationController?.isNavigationBarHidden = false
     }
     
     // request notifcation permissions --------------
