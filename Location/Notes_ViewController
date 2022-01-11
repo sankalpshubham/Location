@@ -1,0 +1,60 @@
+Notes for ViewController
+
+import the CoreLocation module
+CLLocationManagerDelegate - gives me the location of the device as per my need
+
+Line 21 - Calls the notification function to send the user the notification.
+Line 23 - To set up the view controller as delegate and recieve from the locationManager in this class.
+Line 25 - To get the permission to recieve location from the user. This particular one in use get the location always, regardless of app in use or not. There are also options for "While in use" and "State (region)"
+Line 27 - This gives the current location of the device (aka user). There is also stopUpdatingLocation()
+
+Line 29 - For example, if the frequency of the location update is high, it can be changed, in this example send the update every 10 meters.
+
+To write the string that will pop up in front of the user to provide the reason for asking location, put that in Info.plist. Now there are different "keys" for the location. Since we chose 'always authorization' setting, it requires me to put "NSLocationAlwaysAndWhenInUseUsageDescription". For "While app in use it is : "NSLocationWhenInUseUsageDescription"
+
+Line 44 - Method to recieve the current location and perform any actions with it and prints location.
+Line 45 - Loop through all the locations and prints out current gps coordinates. Index is just the index of the loop.
+
+Geofencing
+Line 31 -  This is to create the region that we want get notified if entered or exited. Then instantiated constructor with latitude and longitude of the center.
+Line 33 - This starts to moniter for the region.
+Line 36 - Get notified when user enters the location.
+Line 40 - Get notified when user exits the location.
+
+
+
+[[[[[[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]]]]]]
+
+
+Line 55 - Library for UNUserNotificationCenter is a singleton object and .current() is getting the current instantion of that. And setting the delegate to self, meaning calling back to this class.
+
+Line 57 - Ability to show a badge, alter, and a sound.
+Line 58 - Is asking for the authorization. Once it gets executed, the program skips over everything else and comes back to it at a later time. It is Asynchronous.
+
+Line 59 and down - Once it's ready to pop up that message, it will call the rest of the code inside the function
+Line 59-61 - If there is an error of any kind, it will print the error.
+Line 62 - If no error, then it will be either authorized or not authorized.
+
+Line 63 - If it is authorized, then print it's authorized. Line 89 - Posting a inter app notification. It will let rest of the code know that notifications are authorized.
+Line 67 - If not authorized then, shows message about if the user wants to make it authorized.
+
+Line 70-74 - If the notifications are turned off, then the message will pop up saying that it's off. And the option will be there to turn on. settingsUrl is to set to direct to that settings page. Guard is there in case of any error. So it will just return out of that if there is any error.
+
+Line 76-81 - It checks if it can direct to the page when the user clicks on turn on the notification, it will directly go the setting page where the notifications are turned off.
+
+Line 84-87 - Is when the user denies the turn on the notification.
+
+Line 88-91 - If not authorized, then it will show the message on the main thread.
+
+-----------
+
+Line 104 - Postlocalnotification is what is posted to the user. It takes in a string parameter which will be showed to the user.
+Line 105 - Getting an instance of this.
+
+Line 107-110 - Content of a notification. Sound is default of ios sound.
+
+Line 112 - This trigger is when the notification pops up. In this, it comes after 1 second of arrival to the destination. There are other triggers as well. For example, calender, location (which is the one that is something we can use with fewer lines of code here but we are not using it.)
+
+Line 114 - This is requesting to post the notification. Type notificationrequest and constructor. We can even remove all pending notification using the indentifier.
+
+Line 116 - Then the notification request is added to the center. And if eny error then print error, otherwise print added.
