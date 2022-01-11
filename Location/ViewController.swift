@@ -28,6 +28,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UNUserNotific
     var coordinates2D : CLLocationCoordinate2D = CLLocationCoordinate2D()
     var geoFencRegion : CLCircularRegion = CLCircularRegion()
     
+    let accountSID = "ACe9af4c70887a4bd6d54354099409fda6"
+    let authToken = "f96f685e38e9476cec46246320f6b7a6"
+    
     override func viewDidLoad() {                   //DO we NEED the HomeViewController then? Just Remove?
         super.viewDidLoad()
         view.snapshotView(afterScreenUpdates: true)                 // does this not change ViewSnapShot warning?!
@@ -95,21 +98,16 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UNUserNotific
         }
     }
     
+    // send the text message to another phone using Twilio and Alamofire
     func sendMessage(message: String) {
-        if let accountSID = ProcessInfo.processInfo.environment["TWILIO_ACCOUNT_SID"], let authToken = ProcessInfo.processInfo.environment["TWILIO_AUTH_TOKEN"] {
+        let url = "https://api.twilio.com/2010-04-01/Accounts/ACe9af4c70887a4bd6d54354099409fda6/Messages"
+        let parameters = ["From": "+14159037449", "To": phoneNumber, "Body": message]      //from: Twilio phone no.
             
-            let url = "https://api.twilio.com/2010-04-01/Accounts/ACe9af4c70887a4bd6d54354099409fda6/Messages"
-            let parameters = ["From": "+14159037449", "To": phoneNumber, "Body": message]      //from: Twilio phone no.
-            
-            AF.request(url, method: .post, parameters: parameters)
-                .authenticate(username: accountSID, password: authToken)
-                .responseJSON { response in
-                    debugPrint(response)
-                }
-            print("Worked!")
-        } else {
-            print("Did not work!")
-        }
+        AF.request(url, method: .post, parameters: parameters)
+            .authenticate(username: self.accountSID, password: self.authToken)
+            .responseJSON { response in
+                debugPrint(response)
+            }
     }
     
     // request notifcation permissions --------------
