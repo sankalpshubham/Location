@@ -28,10 +28,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UNUserNotific
     var coordinates2D : CLLocationCoordinate2D = CLLocationCoordinate2D()
     var geoFencRegion : CLCircularRegion = CLCircularRegion()
     
-    let accountSID = "ACe9af4c70887a4bd6d54354099409fda6"
-    let authToken = "f96f685e38e9476cec46246320f6b7a6"
+    let accountSID = "____________"
+    let authToken = "_____________"
     
-    override func viewDidLoad() {                   //DO we NEED the HomeViewController then? Just Remove?
+    override func viewDidLoad() {
         super.viewDidLoad()
         view.snapshotView(afterScreenUpdates: true)                 // does this not change ViewSnapShot warning?!
         
